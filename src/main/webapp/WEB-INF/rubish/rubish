@@ -1,0 +1,224 @@
+
+<%--<div id="slider-home">--%>
+<%--<div class="slider-container">--%>
+<%--<div class="slider-control left inactive"></div>--%>
+<%--<div class="slider-control right"></div>--%>
+<%--<ul class="slider-pagi"></ul>--%>
+<%--<div class="slider">--%>
+<%--<%--<c:set var="count" value="0"  scope="page"/>--%>--%>
+<%--<c:forEach items="${slidePhotos}" var="slidePhoto">--%>
+<%--<%--<c:set var="tmp_name" value="slide slide-${slidePhoto.id}" scope="page" />--%>--%>
+<%--<%--<c:if test="${count == 0}">--%>--%>
+<%--<%--<c:set var="tmp_name" value="slide slide-${slidePhoto.id} active"/>--%>--%>
+<%--<%--</c:if>--%>--%>
+<%--<div class="slide slide-${slidePhoto.id} active">--%>
+<%--<div class="slide__bg"></div>--%>
+<%--<div class="slide__content">--%>
+<%--<svg class="slide__overlay" viewBox="0 0 720 405" preserveAspectRatio="xMaxYMax slice">--%>
+<%--<path class="slide__overlay-path" d="M0,0 150,0 500,405 0,405"></path>--%>
+<%--</svg>--%>
+<%--<div class="slide__text">--%>
+<%--<h2 class="slide__text-heading">${slidePhoto.name}</h2>--%>
+
+<%--<p class="slide__text-desc">${slidePhoto.description}</p>--%>
+<%--<a class="slide__text-link" href="photo/${slidePhoto.id}">Перейти к фото</a>--%>
+<%--</div>--%>
+<%--</div>--%>
+<%--</div>--%>
+<%--<%--<c:set var="count" value="${count + 1}" scope="page"/>--%>--%>
+<%--</c:forEach>--%>
+<%--</div>--%>
+<%--</div>--%>
+<%--</div>--%>
+
+-------------------------------------------
+
+ <%--<script type="text/javascript">--%>
+
+    <%--var imgs = [];--%>
+
+    <%--<c:forEach items="${slidePhotos}" var="photo">--%>
+    <%--imgs[imgs.length] = "data:image/jpg;base64,${photo.encoded}";--%>
+    <%--</c:forEach>--%>
+
+    <%--var cnt = imgs.length;--%>
+
+    <%--$(function () {--%>
+    <%--setInterval(Slider, 5000);--%>
+    <%--var $imageSlide = $('img[id$=imageSlide]');--%>
+    <%--$imageSlide.attr('src', imgs[cnt - 1]);--%>
+    <%--});--%>
+    <%--function Slider() {--%>
+    <%--$('#imageSlide').fadeOut("slow", function () {--%>
+    <%--$(this).attr('src', imgs[(imgs.length++) % cnt]).fadeIn("slow");--%>
+    <%--});--%>
+    <%--}--%>
+    <%--</script>--%>
+
+    <%--<div>--%>
+    <%--<p class="slide">--%>
+    <%--<img id="imageSlide"/>--%>
+    <%--</p>--%>
+    <%--</div>--%>
+
+-------------------------------------------
+
+
+function drawComments(currentUserId, photoId, isAuthorized) {
+    $.ajax({
+        type: "POST",
+        url: "/drawComments",
+        data: "id=" + photoId.toString(),
+        success: function (list) {
+            $("#comments").html("");
+            var parent = document.getElementById('comments');
+            if (list.length > 0) {
+
+                showCountComments(parent, list.length);
+
+                list.forEach(function (node) {
+                    drawComment(parent, node, isAuthorized);
+                    /*
+                     var containerDiv = document.createElement('div');
+
+                     containerDiv.setAttribute('class', 'comment-container');
+                     containerDiv.setAttribute('id', node.id);
+
+                     var titleDiv = document.createElement('div');
+                     titleDiv.setAttribute('class', 'comment-title');
+
+                     var titleA = document.createElement('a');
+                     titleA.setAttribute('class', 'nick');
+                     titleA.setAttribute('href', '/');
+                     titleA.innerHTML = node.user.username;
+
+                     var titleSpan = document.createElement('span');
+                     titleSpan.setAttribute('class', 'date');
+                     titleSpan.innerHTML = '&nbsp' + node.createDate;
+
+                     titleDiv.appendChild(titleA);
+                     titleDiv.appendChild(titleSpan);
+                     containerDiv.appendChild(titleDiv);
+
+                     var contentDiv = document.createElement('div');
+                     contentDiv.setAttribute('class', 'comment-content');
+                     contentDiv.innerHTML = node.content;
+
+                     if (isAuthorized) {
+                     var answerDiv = document.createElement('div');
+                     answerDiv.setAttribute('id', 'answer-href');
+
+                     var answerA = document.createElement('a');
+                     answerA.setAttribute('href', 'javascript:redrawInput(' + node.id + ')');
+                     answerA.innerHTML = "Ответить";
+
+                     answerDiv.appendChild(answerA);
+                     contentDiv.appendChild(answerDiv);
+                     }
+
+                     containerDiv.appendChild(titleDiv);
+                     containerDiv.appendChild(contentDiv);
+
+                     parent.appendChild(containerDiv);
+                     */
+                });
+            }
+            else {
+                showCountComments(parent, null);
+            }
+        },
+        error: function () {
+            alert('error ' + photoId);
+        }
+    })
+}
+
+
+
+
+
+-------------------------------------------
+
+
+
+<div class="profile-edit">
+    <form:form commandName="user" action="profile" method="post">
+        <table class="profile-table-edit">
+            <tr>
+                <th colspan="2"><h3>Редактирование профайла</h3></th>
+            </tr>
+            <tr>
+                <td class="profile-info">
+                    <table class="profile-table-info">
+                        <td></td>
+                        <tr>
+                            <td>Имя, Фамилия:</td>
+                            <td><form:input path="username"/></td>
+                            <td><form:errors path="username" cssClass="error"/></td>
+                        </tr>
+                        <tr>
+                            <td>Почта:</td>
+                            <td><form:input path="email"/></td>
+                            <td><form:errors path="email" cssClass="error"/></td>
+                        </tr>
+                        <%--<tr>--%>
+                            <%--<td>Дата рождения:</td>--%>
+                            <%--<td><input id="birthday" name="birthday" type="date" value="2016-05-31" style="width:173px">--%>
+                            <%--</td>--%>
+                            <%--<td></td>--%>
+                        <%--</tr>--%>
+                        <tr>
+                            <td>Дата рождения:</td>
+                            <td><form:input path="birthday"/></td>
+                            <td><form:errors path="birthday" cssClass="error"/></td>
+                        </tr>
+                        <%--<tr>--%>
+                            <%--<td>Страна:</td>--%>
+                            <%--<td><input id="country" name="country" type="text" value=""></td>--%>
+                            <%--<td></td>--%>
+                        <%--</tr>--%>
+                        <tr>
+                            <td>Страна:</td>
+                            <td><form:input path="country"/></td>
+                            <td><form:errors path="country" cssClass="error"/></td>
+                        </tr>
+                        <%--<tr>--%>
+                            <%--<td>Город:</td>--%>
+                            <%--<td><input id="town" name="town" type="text" value=""></td>--%>
+                            <%--<td></td>--%>
+                        <%--</tr>--%>
+                        <tr>
+                            <td>Город:</td>
+                            <td><form:input path="town"/></td>
+                            <td><form:errors path="town" cssClass="error"/></td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="profile-avatar">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="https://i.photographers.ua/thumbnails/users/28098/120xaqajutvn0my_web.jpg"
+                                     height="200"/>
+                            </td>
+                        </tr>
+                        <%--<tr>--%>
+                            <%--<td>--%>
+                                <%--<input id="file-id" name="file" type="file" value="">--%>
+                            <%--</td>--%>
+                        <%--</tr>--%>
+                        <tr>
+                            <td>
+                                <form:input id="file-id" type="file" path="file"/>
+                                <form:errors path="file" cssClass="error"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr align="center">
+                <td colspan="2"><input type="submit" value="Сохранить"/></td>
+            </tr>
+        </table>
+    </form:form>
+</div>
